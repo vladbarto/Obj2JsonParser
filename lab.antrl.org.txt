@@ -1,0 +1,56 @@
+##########LEXER
+// DELETE THIS CONTENT IF YOU PUT COMBINED GRAMMAR IN Parser TAB
+lexer grammar ExprLexer;
+
+INTEGER: [0-9]+ ;
+FLOAT: [+-]?[0-9]*('.')[0-9]+ ;
+VERTEX: 'v ' ;
+FACE: 'f' ;
+EOL: '\n' ;
+SLS: '/' ;
+SPS: [ ]->skip;
+
+
+##########PARSER
+parser grammar ExprParser;
+options { tokenVocab=ExprLexer; }
+    
+program   : ls
+    ;
+
+ls  : ls l
+    | l
+    ;
+
+l   : VERTEX vertex_line terminator
+    | FACE face_line terminator
+    | others terminator
+    | terminator
+    ;
+
+terminator: EOL
+          ;
+
+others: others INTEGER 
+    | others FLOAT
+    | INTEGER
+    | FLOAT
+    ;
+
+vertex_line: FLOAT FLOAT FLOAT
+    ;
+
+face_line: face_data face_data face_data
+    ;
+
+face_data: INTEGER SLS INTEGER SLS INTEGER
+    ;
+
+###########INPUT
+v -1.000000 -1.000000 1.000000
+v -1.000000 1.000000 1.000000
+v -1.000000 -1.000000 -1.000000
+f 2/1/1 3/2/1 1/3/1
+f 4/4/2 7/5/2 3/2/2
+f 8/6/3 5/7/3 7/5/3
+(\n)
