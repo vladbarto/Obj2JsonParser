@@ -71,12 +71,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Coordonatele unui Vertex pe axa Ox, Oy, Oz sunt retinute in aceasta structura
 typedef struct Vertex {
     float x, y, z;
 } Vertex;
 
+// Face este o tripleta de tipul "v/vt/vn" (vertex/vertex texture/vertex normal)
+// v = v1, vt = v2, vn = v3
 typedef struct Face {
-    int v1, v2, v3; // Indices of vertices
+    int v1, v2, v3;
 } Face;
 
 Vertex vertices[5000];
@@ -84,6 +87,8 @@ Face faces[5000];
 int noOfVertices = 0;
 int noOfFaces = 0;
 
+// Pentru ca yylval sa recunoasca si float-uri, e nevoie de un union
+// yylval by default poate stoca int-uri
 #define YYSTYPE_IS_DECLARED
 typedef union {
     int ival;
@@ -93,7 +98,7 @@ typedef union {
 
 extern YYSTYPE yylval;
 
-#line 97 "y.tab.c"
+#line 102 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -527,8 +532,8 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    32,    32,    35,    36,    37,    40,    41,    42,    43,
-      44,    47,    48,    51,    52,    53,    54,    57,    65,    68
+       0,    37,    37,    40,    41,    42,    45,    46,    47,    48,
+      49,    52,    53,    56,    57,    58,    59,    62,    71,    74
 };
 #endif
 
@@ -1329,29 +1334,31 @@ yyreduce:
   switch (yyn)
     {
   case 17:
-#line 57 "lista.y"
+#line 62 "lista.y"
                                { 
+        // se ajunge la o linie de tipul "v 1.670000 2.340000 -5.400000"
         vertices[noOfVertices].x = yyvsp[-2].fval;
         vertices[noOfVertices].y = yyvsp[-1].fval;
         vertices[noOfVertices].z = yyvsp[0].fval;
         noOfVertices++;
     }
-#line 1340 "y.tab.c"
+#line 1346 "y.tab.c"
     break;
 
   case 19:
-#line 68 "lista.y"
+#line 74 "lista.y"
                                            {
+        // se ajunge la o tripleta de tipul "v/vt/vn"
         faces[noOfFaces].v1 = yyvsp[-4].ival;
         faces[noOfFaces].v2 = yyvsp[-3].ival;
         faces[noOfFaces].v3 = yyvsp[-2].ival;
         noOfFaces++;
     }
-#line 1351 "y.tab.c"
+#line 1358 "y.tab.c"
     break;
 
 
-#line 1355 "y.tab.c"
+#line 1362 "y.tab.c"
 
       default: break;
     }
@@ -1583,13 +1590,14 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 76 "lista.y"
+#line 83 "lista.y"
 
 
 #include "lex.yy.c"
 int main() {
     yyparse();
 
+    // scrierea in fisierul de iesire in format json
     printf("{\n\t\"vertices\": [\n");
     for(int i = 0; i < noOfVertices; i++)
     {
