@@ -2,18 +2,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Coordonatele unui Vertex pe axa Ox, Oy, Oz sunt retinute in aceasta structura
 typedef struct Vertex {
     float x, y, z;
 } Vertex;
 
+// Face este o tripleta de tipul "v/vt/vn" (vertex/vertex texture/vertex normal)
+// v = v1, vt = v2, vn = v3
 typedef struct Face {
-    int v1, v2, v3; // Indices of vertices
+    int v1, v2, v3;
 } Face;
 
 Vertex vertices[5000];
 Face faces[5000];
 int noOfVertices = 0;
 int noOfFaces = 0;
+
+// Pentru ca yylval sa recunoasca si float-uri, e nevoie de un union
+// yylval by default poate stoca int-uri
+#define YYSTYPE_IS_DECLARED
+typedef union {
+    int ival;
+    float fval;
+    char cval;
+} YYSTYPE;
+
+extern YYSTYPE yylval;
 %}
 
 %token FLOAT INTEGER EOL VERTEX FACE
@@ -46,9 +60,10 @@ OTHERS: OTHERS INTEGER
     ;
 
 VERTEX_LINE: FLOAT FLOAT FLOAT { 
-        vertices[noOfVertices].x = $1;
-        vertices[noOfVertices].y = $2;
-        vertices[noOfVertices].z = $3;
+        // se ajunge la o linie de tipul "v 1.670000 2.340000 -5.400000"
+        vertices[noOfVertices].x = $1.fval;
+        vertices[noOfVertices].y = $2.fval;
+        vertices[noOfVertices].z = $3.fval;
         noOfVertices++;
     }
     ;
@@ -57,9 +72,10 @@ FACE_LINE: FACE_DATA FACE_DATA FACE_DATA
     ;
 
 FACE_DATA: INTEGER '/' INTEGER '/' INTEGER {
-        faces[noOfFaces].v1 = $1;
-        faces[noOfFaces].v2 = $2;
-        faces[noOfFaces].v3 = $3;
+        // se ajunge la o tripleta de tipul "v/vt/vn"
+        faces[noOfFaces].v1 = $1.ival;
+        faces[noOfFaces].v2 = $2.ival;
+        faces[noOfFaces].v3 = $3.ival;
         noOfFaces++;
     }
     ;
@@ -70,6 +86,7 @@ FACE_DATA: INTEGER '/' INTEGER '/' INTEGER {
 int main() {
     yyparse();
 
+    // scrierea in fisierul de iesire in format json
     printf("{\n\t\"vertices\": [\n");
     for(int i = 0; i < noOfVertices; i++)
     {
@@ -81,10 +98,13 @@ int main() {
     printf("\t],\n");
 
     printf("\t\"faces\": [\n");
-    for(int i = 0; i < noOfFaces; i++)
+    for(int i = 0; i < noOfFaces-2; i = i + 3)
     {
-        printf("\t\t[%d, %d, %d]", faces[i].v1, faces[i].v2, faces[i].v3);
-        if(i < noOfFaces - 1)
+        printf("\t\t[%d, %d, %d]", 
+            faces[i].v1 - 1, 
+            faces[i+1].v1 - 1, 
+            faces[i+2].v1 - 1);
+        if(i < noOfFaces - 4)
             printf(",");
         printf("\n");
     }

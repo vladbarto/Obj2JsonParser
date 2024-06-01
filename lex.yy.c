@@ -448,7 +448,7 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "lista.l"
 #line 2 "lista.l"
-extern int yylval;
+// extern int yylval;
 #include <stdlib.h>
 #line 454 "lex.yy.c"
 #line 455 "lex.yy.c"
@@ -731,7 +731,7 @@ case 1:
 YY_RULE_SETUP
 #line 12 "lista.l"
 {
-                yylval = atof(yytext); 
+                yylval.fval = atof(yytext);
                 return FLOAT;
             }
 	YY_BREAK
@@ -739,7 +739,7 @@ case 2:
 YY_RULE_SETUP
 #line 16 "lista.l"
 {
-                yylval = atoi(yytext);
+                yylval.ival = atoi(yytext);
                 return INTEGER;
             }
 	YY_BREAK
@@ -748,7 +748,7 @@ case 3:
 YY_RULE_SETUP
 #line 20 "lista.l"
 {
-                yylval = yytext[0];
+                yylval.cval = yytext[0];
                 return EOL;
             }
 	YY_BREAK

@@ -1,5 +1,5 @@
 %{
-extern int yylval;
+// extern int yylval;
 #include <stdlib.h>
 %}
 %option noyywrap
@@ -10,15 +10,15 @@ vertex "v "
 face "f"
 %%
 {float}     {
-                yylval = atof(yytext); 
+                yylval.fval = atof(yytext);
                 return FLOAT;
             }
 [0-9]+   {
-                yylval = atoi(yytext);
+                yylval.ival = atoi(yytext);
                 return INTEGER;
             }
 \n          {
-                yylval = yytext[0];
+                yylval.cval = yytext[0];
                 return EOL;
             }
 {vertex}    {   return VERTEX;  } 

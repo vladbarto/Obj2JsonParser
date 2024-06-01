@@ -84,7 +84,16 @@ Face faces[5000];
 int noOfVertices = 0;
 int noOfFaces = 0;
 
-#line 88 "y.tab.c"
+#define YYSTYPE_IS_DECLARED
+typedef union {
+    int ival;
+    float fval;
+    char cval;
+} YYSTYPE;
+
+extern YYSTYPE yylval;
+
+#line 97 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -518,8 +527,8 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    23,    23,    26,    27,    28,    31,    32,    33,    34,
-      35,    38,    39,    42,    43,    44,    45,    48,    56,    59
+       0,    32,    32,    35,    36,    37,    40,    41,    42,    43,
+      44,    47,    48,    51,    52,    53,    54,    57,    65,    68
 };
 #endif
 
@@ -1320,29 +1329,29 @@ yyreduce:
   switch (yyn)
     {
   case 17:
-#line 48 "lista.y"
+#line 57 "lista.y"
                                { 
-        vertices[noOfVertices].x = yyvsp[-2];
-        vertices[noOfVertices].y = yyvsp[-1];
-        vertices[noOfVertices].z = yyvsp[0];
+        vertices[noOfVertices].x = yyvsp[-2].fval;
+        vertices[noOfVertices].y = yyvsp[-1].fval;
+        vertices[noOfVertices].z = yyvsp[0].fval;
         noOfVertices++;
     }
-#line 1331 "y.tab.c"
+#line 1340 "y.tab.c"
     break;
 
   case 19:
-#line 59 "lista.y"
+#line 68 "lista.y"
                                            {
-        faces[noOfFaces].v1 = yyvsp[-4];
-        faces[noOfFaces].v2 = yyvsp[-3];
-        faces[noOfFaces].v3 = yyvsp[-2];
+        faces[noOfFaces].v1 = yyvsp[-4].ival;
+        faces[noOfFaces].v2 = yyvsp[-3].ival;
+        faces[noOfFaces].v3 = yyvsp[-2].ival;
         noOfFaces++;
     }
-#line 1342 "y.tab.c"
+#line 1351 "y.tab.c"
     break;
 
 
-#line 1346 "y.tab.c"
+#line 1355 "y.tab.c"
 
       default: break;
     }
@@ -1574,7 +1583,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 67 "lista.y"
+#line 76 "lista.y"
 
 
 #include "lex.yy.c"
@@ -1592,10 +1601,13 @@ int main() {
     printf("\t],\n");
 
     printf("\t\"faces\": [\n");
-    for(int i = 0; i < noOfFaces; i++)
+    for(int i = 0; i < noOfFaces-2; i = i + 3)
     {
-        printf("\t\t[%d, %d, %d]", faces[i].v1, faces[i].v2, faces[i].v3);
-        if(i < noOfFaces - 1)
+        printf("\t\t[%d, %d, %d]", 
+            faces[i].v1 - 1, 
+            faces[i+1].v1 - 1, 
+            faces[i+2].v1 - 1);
+        if(i < noOfFaces - 4)
             printf(",");
         printf("\n");
     }
