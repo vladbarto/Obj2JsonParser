@@ -108,4 +108,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - [Flex](https://github.com/westes/flex)
 - [Bison](https://www.gnu.org/software/bison/)
 
-For any further questions or issues, please open an issue in the repository or contact the maintainer at [your-email@example.com].
+For any further questions or issues, please open an issue in the repository or contact the maintainer at vladbartolomei@gmail.com.
